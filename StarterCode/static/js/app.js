@@ -1,36 +1,25 @@
 d3.json("samples.json").then(function(data) {
-    // console.log(data.metadata[0]);
-
-    // var metaData = data.metaData ;
-
-    // console.log(data.samples[0].sample_values)
-    // console.log(data.samples[0].sample_values.length)
-
     sampleValues = [] ;
     sampleIDs = [] ;
-    yVals = [] ;
-    yStarter = 9
+    sampleNames = [] ;
 
     for (let i=0; i<10; i++) {
         sampleValues.push(data.samples[0].sample_values[i]) ;
         sampleIDs.push('OTU' + ' ' + data.samples[0].otu_ids[i].toString()) ;
-        yVals.push(yStarter) ;
-        yStarter--;
+        sampleNames.push(data.samples[0].otu_labels[i])
         } ;
-
-    // sampleValues.reverse() ;    
 
     console.log(sampleValues) ;
     console.log(sampleIDs) ;
-    // console.log(yVals)
-
-
+    console.log(sampleNames) ;
 
     var trace1 = {
         x: sampleValues.reverse(),
         y: sampleIDs.reverse(),
         type: "bar",
         orientation: "h",
+        mode: "markers",
+        text: sampleNames.reverse()
       };
       
       var data = [trace1];
@@ -40,10 +29,5 @@ d3.json("samples.json").then(function(data) {
       };
       
       Plotly.newPlot("bar", data, layout);
-
-
-
-
-
 
 }) ;
