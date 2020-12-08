@@ -1,6 +1,13 @@
+plotFunc('940') ;
+
+function plotFunc(dataset) {
 d3.json("samples.json").then(function (data) {
 
-    currentData = data.samples[0];
+    var a = data.names.indexOf(dataset);
+    currentData = data.samples[a];
+    metaData = data.metadata[a] ;
+
+
 
     // gather data for the bubble plot
     var allSampleValues = [];
@@ -78,33 +85,109 @@ d3.json("samples.json").then(function (data) {
     Plotly.newPlot("bubble", bubbleData, bubbleLayout);
 
 
-    d3.selectAll("#selDataset").on("change", getData);
 
-    // Function called by DOM changes
-    function getData() {
-        var dropdownMenu = d3.select("#selDataset");
-        // Assign the value of the dropdown menu option to a variable
-        var dataset = dropdownMenu.property("value").toString();
-        console.log(dataset);
-        var a = data.names.indexOf(dataset);
-        console.log(a)
-        newData = data.samples[a];
-        console.log(newData);
-        updatePlotly(newData);
-    }
 
-    // });
+    var div = document.getElementById('sample-metadata');
 
-    function updatePlotly(newdata) {
-        Plotly.restyle("bubble", "values", [newdata]);
-    }
+    div.innerHTML = [];
+    div.innerHTML += 'id:' + metaData.id + "<br />";
+    div.innerHTML += 'ethnicity:' + metaData.ethnicity + "<br />";
+    div.innerHTML += 'gender:' + metaData.gender + "<br />";
+    div.innerHTML += 'age:' + metaData.age + "<br />";
+    div.innerHTML += 'location:' + metaData.location + "<br />";
+    div.innerHTML += 'bbtype:' + metaData.bbtype + "<br />";
+    div.innerHTML += 'wfreq:' + metaData.wfreq + "<br />";   
 
-    function myFunction(p1, p2) {
-        p3 = p1 * p2 ;
-        return p3 ;
-    }
+    console.log(metaData)
 
-    x = myFunction(3,5) ;
-    console.log(x)
+    // var traceGauge = {
+    //     type: 'pie',
+    //     showlegend: false,
+    //     hole: 0.4,
+    //     rotation: 90,
+    //     values: [ 81/9, 81/9, 81/9, 81/9, 81/9, 81/9, 81/9, 81/9, 81/9, 81],
+    //     text: ['0-1','1-2','2-3','3-4','4-5','5-6','6-7','7-8','8-9'],
+    //     direction: 'clockwise',
+    //     textinfo: 'text',
+    //     textposition: 'inside',
+    //     marker: {
+    //       colors: ['','','','','','','','','','white'],
+    //       labels: ['0-1','1-2','2-3','3-4','4-5','5-6','6-7','7-8','8-9'],
+    //       hoverinfo: 'label'
+    //     }
+    //   }
+  
+    //   // needle
+    //   var degrees = 106, radius = .68
+    //   var radians = degrees * Math.PI / 180
+    //   var x = -1 * radius * Math.cos(radians) * metaData.wfreq
+    //   var y = radius * Math.sin(radians)
+
+    //   console.log(x)
+    //   console.log(y)
+  
+    //   var gaugeLayout = {
+    //     shapes: [{
+    //       type: 'line',
+    //       x0: 0.5,
+    //       y0: 0.5,
+    //       x1: 1.31,
+    //       y1: 0.65,
+    //     //   x1: x,
+    //     //   y1: y,
+    //       line: {
+    //         color: 'black',
+    //         width: 3
+    //       }
+    //     }],
+    //     title: 'Chart',
+    //     xaxis: {visible: false, range: [-1, 1]},
+    //     yaxis: {visible: false, range: [-1, 1]}
+    //   }
+  
+    //   var dataGauge = [traceGauge]
+  
+    //   Plotly.plot('gauge', dataGauge, gaugeLayout)
+
+
+
+    var gaugeData = [
+        {
+            type: "indicator",
+            mode: "gauge+number",
+            value: metaData.wfreq,
+            title: { text: "Scrubs Per Week", font: { size: 24 } },
+            gauge: {
+              axis: { range: [null, 9], tickwidth: 1, tickcolor: "darkblue" },
+              bar: { color: "black" },
+              bgcolor: "white",
+              borderwidth: 2,
+              bordercolor: "gray",
+              steps: [
+                { range: [0, 1], color: "lightblue" },
+                { range: [1, 2], color: "coral" },
+                { range: [2, 3], color: "palegreen" },
+                { range: [3, 4], color: "red" },
+                { range: [4, 5], color: "mediumorchid" },
+                { range: [5, 6], color: "green" },
+                { range: [6, 7], color: "chocolate" },
+                { range: [7, 8], color: "tan" },
+                { range: [8, 9], color: "blue" }
+              ],              
+            }
+          }
+        ];
+    Plotly.newPlot('gauge', gaugeData) //, gaugeLayout);
 
 });
+};
+
+d3.selectAll("#selDataset").on("change", getData);
+
+// Function called by DOM changes
+function getData() {
+    var dropdownMenu = d3.select("#selDataset");
+    // Assign the value of the dropdown menu option to a variable
+    var dataset = dropdownMenu.property("value").toString();
+    plotFunc(dataset)
+}
