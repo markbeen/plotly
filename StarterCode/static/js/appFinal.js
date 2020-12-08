@@ -83,12 +83,12 @@ function plotFunc(testID) {
             title: {
                 text: "<b>Sample Values of Top 10 OTU IDs</b>",
                 font: {
-                    size: 18
+                    size: 20
                 }
             },
             xaxis: {
                 title: {
-                    text: "<b>Sample Values</b>",
+                    text: "<b>Sample Value</b>",
                     font: {
                         size: 14
                     }
@@ -110,90 +110,53 @@ function plotFunc(testID) {
         // ************** (V) MAKE SCATTER PLOT ****************************************************** 
         // I created a variable to hold colors for the bubble plot - not sure I need to do this
         var colors = allSampleIDs.map(i => i);
-
+        // make "trace" for bubble plot
         var trace2 = {
             x: allSampleIDs,
             y: allSampleValues,
             type: "scatter",
             mode: "markers",
             marker: {
-                size: allSampleValues,
+                size: allSampleValues, // this creates 'bubble' sizes equivalent to sample_value
                 color: colors
             }
         };
-
-        var bubbleData = [trace2];
-
+        // define bubble plot layout (i.e. titles, axes, font properties):
         var bubbleLayout = {
-            title: "Bubble Chart"
+            title: {
+                text: "<b>Sample Values of All OTU IDs</b>",
+                font: {
+                    size: 20
+                }
+            },
+            xaxis: {
+                title: {
+                    text: "<b>Operational Taxonomic Unit (OTU) ID</b>",
+                    font: {
+                        size: 14
+                    }
+                }
+            },
+            yaxis: {
+                title: {
+                    text: "<b>Sample Value</b>",
+                    font: {
+                        size: 14
+                    }
+                }
+            },
         };
+        // make the plot - the plotly argument order: Plotly.newPlot(graphDiv, data, layout, config)
+        Plotly.newPlot("bubble", [trace2], bubbleLayout);
 
-        Plotly.newPlot("bubble", bubbleData, bubbleLayout);
-
-
-
-
-
-
-        console.log(metaData)
-
-        // var traceGauge = {
-        //     type: 'pie',
-        //     showlegend: false,
-        //     hole: 0.4,
-        //     rotation: 90,
-        //     values: [ 81/9, 81/9, 81/9, 81/9, 81/9, 81/9, 81/9, 81/9, 81/9, 81],
-        //     text: ['0-1','1-2','2-3','3-4','4-5','5-6','6-7','7-8','8-9'],
-        //     direction: 'clockwise',
-        //     textinfo: 'text',
-        //     textposition: 'inside',
-        //     marker: {
-        //       colors: ['','','','','','','','','','white'],
-        //       labels: ['0-1','1-2','2-3','3-4','4-5','5-6','6-7','7-8','8-9'],
-        //       hoverinfo: 'label'
-        //     }
-        //   }
-
-        //   // needle
-        //   var degrees = 106, radius = .68
-        //   var radians = degrees * Math.PI / 180
-        //   var x = -1 * radius * Math.cos(radians) * metaData.wfreq
-        //   var y = radius * Math.sin(radians)
-
-        //   console.log(x)
-        //   console.log(y)
-
-        //   var gaugeLayout = {
-        //     shapes: [{
-        //       type: 'line',
-        //       x0: 0.5,
-        //       y0: 0.5,
-        //       x1: 1.31,
-        //       y1: 0.65,
-        //     //   x1: x,
-        //     //   y1: y,
-        //       line: {
-        //         color: 'black',
-        //         width: 3
-        //       }
-        //     }],
-        //     title: 'Chart',
-        //     xaxis: {visible: false, range: [-1, 1]},
-        //     yaxis: {visible: false, range: [-1, 1]}
-        //   }
-
-        //   var dataGauge = [traceGauge]
-
-        //   Plotly.plot('gauge', dataGauge, gaugeLayout)
-
-
-
+        // ************** (V) MAKE GAUGE PLOT ****************************************************** 
+        // make "gauge" for data"
         var gaugeData = [
             {
                 type: "indicator",
                 mode: "gauge+number",
                 value: metaData.wfreq,
-                title: { text: "Scrubs Per Week", font: { size: 24 } },
+                title: { text: "<b>Scrubs Per Week</b>", font: { size: 20 } },
                 gauge: {
                     axis: { range: [null, 9], tickwidth: 1, tickcolor: "darkblue" },
                     bar: { color: "black" },
@@ -214,17 +177,22 @@ function plotFunc(testID) {
                 }
             }
         ];
-        Plotly.newPlot('gauge', gaugeData) //, gaugeLayout);
+        // make the plot - the plotly argument order: Plotly.newPlot(graphDiv, data, layout, config)
+        Plotly.newPlot('gauge', gaugeData);
 
     });
 };
 
+// ************** (VI) RESPOND IF NEW TEST ID IS SELECTED FROM PULLDOWN ***************************************
+// use D3 to call up function ('getData') that delivers new testID to plotFunc
 d3.selectAll("#selDataset").on("change", getData);
 
-// Function called by DOM changes
+
+// ************** (VII) RESPOND IF NEW TEST ID IS SELECTED FROM PULLDOWN ***************************************
+// getData function called by DOM (i.e. pulldown) changes. A new testID (i.e. newTestID is sent to plotFunc):
 function getData() {
     var dropdownMenu = d3.select("#selDataset");
     // Assign the value of the dropdown menu option to a variable
-    var dataset = dropdownMenu.property("value").toString();
-    plotFunc(dataset)
+    var newTestID = dropdownMenu.property("value").toString();
+    plotFunc(newTestID);
 }
